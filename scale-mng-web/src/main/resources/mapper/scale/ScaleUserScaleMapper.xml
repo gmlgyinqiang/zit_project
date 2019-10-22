@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.edgedo.sys.mapper.ScaleUserScaleMapper" >
+   
+   
+    <resultMap id="BaseResultMap" type="com.edgedo.sys.entity.ScaleUserScale" >
+			<id column="ID" property="id"/>
+			<result column="CREATE_TIME" property="createTime"/>
+			<result column="OWNER_ORDER_ID" property="ownerOrderId"/>
+			<result column="USER_ID" property="userId"/>
+			<result column="USER_TYPE" property="userType"/>
+			<result column="OWNER_COM_ID" property="ownerComId"/>
+			<result column="OWNER_COM_NAME" property="ownerComName"/>
+			<result column="SCALE_ID" property="scaleId"/>
+			<result column="SCALE_NAME" property="scaleName"/>
+			<result column="SCALE_DESCRIPTION" property="scaleDescription"/>
+			<result column="SCALE_PRICE" property="scalePrice"/>
+			<result column="SCALE_STATE" property="scaleState"/>
+			<result column="QUESTION_SUM_NUM" property="questionSumNum"/>
+			<result column="QUESTION_FINISHED_NUM" property="questionFinishedNum"/>
+			<result column="CURRENT_QUESTION_NUM" property="currentQuestionNum"/>
+			<result column="SCALE_SCORE" property="scaleScore"/>
+			<result column="SMALL_IMAGE_URL" property="smallImageUrl"/>
+			<result column="BIG_IMAGE_URL" property="bigImageUrl"/>
+		    <result column="RESULT_URL" property="resultURL"/>
+			<result column="START_TIME" property="startTime"/>
+			<result column="END_TIME" property="endTime"/>
+			<result column="USER_END_TIME" property="userEndTime"/>
+			<result column="DATA_STATE" property="dataState"/>
+    </resultMap>
+   
+    <resultMap id="BaseResultViewMap" type="com.edgedo.sys.queryvo.ScaleUserScaleView" extends="BaseResultMap">
+		<result column="USER_NAME" property="userName"/>
+    </resultMap>
+  
+  
+  <!-- ******* 新增字段请修改这里  ******  -->
+  <sql id="Base_Column_List">
+	 ID, CREATE_TIME, OWNER_ORDER_ID, USER_ID, USER_TYPE, OWNER_COM_ID, OWNER_COM_NAME, SCALE_ID, SCALE_NAME, SCALE_DESCRIPTION, SCALE_PRICE, SCALE_STATE, QUESTION_SUM_NUM, QUESTION_FINISHED_NUM, CURRENT_QUESTION_NUM, SCALE_SCORE, SMALL_IMAGE_URL, BIG_IMAGE_URL, START_TIME, END_TIME, DATA_STATE,RESULT_URL,USER_END_TIME
+  </sql>
+  
+  <!-- ******* 利用好这里的动态查询条件  ******  -->
+  <sql id="where">
+  	<where>
+				<if test='queryObj != null and  queryObj.questionSumNum != null and @org.apache.commons.lang3.StringUtils@isNotEmpty(queryObj.questionSumNum)'>
+					AND  QUESTION_SUM_NUM = #{queryObj.questionSumNum}
+				</if>
+				<if test='queryObj != null and  queryObj.questionFinishedNum != null and @org.apache.commons.lang3.StringUtils@isNotEmpty(queryObj.questionFinishedNum)'>
+					AND  QUESTION_FINISHED_NUM = #{queryObj.questionFinishedNum}
+				</if>
+				<if test='queryObj != null and  queryObj.currentQuestionNum != null and @org.apache.commons.lang3.StringUtils@isNotEmpty(queryObj.currentQuestionNum)'>
+					AND  CURRENT_QUESTION_NUM = #{queryObj.currentQuestionNum}
+				</if>
+				<if test='queryObj != null and  queryObj.startTime != null'>
+					AND  START_TIME = #{queryObj.startTime}
+				</if>
+				<if test='queryObj != null and  queryObj.endTime != null'>
+					AND  END_TIME = #{queryObj.endTime}
+				</if>
+  	</where>
+  	
+  </sql>
+  
+  <!-- ******* 排序判断  ******  
+  <sql id="orderBy">
+  	<if test="orderBy != null and orderBy!= '' ">
+  		order by  ${orderBy}
+  	</if>
+  </sql>-->
+  
+  
+  <!-- 分页条件查询  -->
+  <select id="listPage" parameterType="com.edgedo.sys.queryvo.ScaleUserScaleQuery" resultMap="BaseResultViewMap">
+  		select <include refid="Base_Column_List"/> from scale_user_scale 
+  		<include refid="where"/>
+  </select>
+
+	<select id="listPageSgain" parameterType="com.edgedo.sys.queryvo.ScaleUserScaleQuery" resultMap="BaseResultViewMap">
+		select <include refid="Base_Column_List"/> from scale_user_scale
+		where DATA_STATE='1' and SCALE_STATE='4'
+	</select>
+
+	<select id="listPageForCompany" parameterType="com.edgedo.sys.queryvo.ScaleUserScaleQuery" resultMap="BaseResultViewMap">
+		select sus.ID,sus.SCALE_NAME,sus.SCALE_DESCRIPTION,sus.SCALE_PRICE,sus.SCALE_STATE,sus.QUESTION_SUM_NUM,sus.QUESTION_FINISHED_NUM,sus.CURRENT_QUESTION_NUM,sus.SCALE_SCORE,su.USER_NAME from scale_user_scale sus
+		inner join scale_user su on sus.USER_ID=su.ID
+		where DATA_STATE='1'
+		<if test="queryObj != null and queryObj.userName != null and queryObj.userName != ''">
+			AND su.USER_NAME = #{queryObj.userName}
+		</if>
+		<if test="queryObj != null and queryObj.scaleState != null and queryObj.scaleState != ''">
+			AND sus.SCALE_STATE = #{queryObj.scaleState}
+		</if>
+		<if test='queryObj != null and  queryObj.startTime != null'>
+			AND sus.START_TIME = #{queryObj.startTime}
+		</if>
+		<if test='queryObj != null and  queryObj.endTime != null'>
+			AND sus.END_TIME = #{queryObj.endTime}
+		</if>
+		<if test="queryObj.companyOrderId != null and queryObj.companyOrderId != ''">
+			AND sus.OWNER_ORDER_ID in (
+			select ID from scale_user_order where COMPANY_ORDER_ID=#{queryObj.companyOrderId} and DATA_STATE='1'
+			)
+		</if>
+	</select>
+  
+   <!-- 不分页条件查询  -->
+  <select id="listByObj" parameterType="com.edgedo.sys.queryvo.ScaleUserScaleQuery" resultMap="BaseResultViewMap">
+  		select <include refid="Base_Column_List"/> from scale_user_scale 
+  		<include refid="where"/>
+  </select>
+
+
+	<select id="countFinshedScale" parameterType="java.lang.String" resultType="int">
+		select count(1) from scale_user_scale
+		WHERE DATA_STATE = '1' AND  SCALE_STATE = '3' AND SCALE_ID = #{id}
+	</select>
+
+	<select id="loadByComId" parameterType="java.lang.String" resultMap="BaseResultViewMap">
+		select <include refid="Base_Column_List"/> from scale_user_scale
+		where OWNER_COM_ID= #{ownerCompanyId}
+	</select>
+
+	<select id="getAllEndOrder" resultMap="BaseResultViewMap">
+		select <include refid="Base_Column_List"/> from scale_user_scale where
+		(SCALE_STATE ="1" or SCALE_STATE="2") and DATE_SUB(CURDATE(), INTERVAL 0 DAY) &gt; END_TIME
+	</select>
+
+	<select id="getAllForthEndOrder" resultMap="BaseResultViewMap">
+		select <include refid="Base_Column_List"/> from scale_user_scale where
+		(SCALE_STATE ="1" or SCALE_STATE="2") and IS_REMIND is null and DATE_SUB(END_TIME, INTERVAL 3 DAY) &lt; CURDATE()
+	</select>
+
+	<update id="logicDelete" parameterType="java.lang.String">
+		update scale_user_scale set DATA_STATE='0'
+		where DATA_STATE='1' and ID=#{id}
+	</update>
+
+
+</mapper>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>新增</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../../../layuiadmin/layui/css/layui.css" media="all">
+</head>
+<body>
+
+<div class="layui-form" lay-filter="ScaleUserScale-form" id="ScaleUserScale-form" style="padding: 20px 30px 0 0;">
+        <div class="layui-form-item">
+            <label class="layui-form-label">所属订单ID</label>
+            <div class="layui-input-block">
+                <input type="text" name="ownerOrderId" lay-verify="required" placeholder="请输入所属订单ID" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">所属用户ID</label>
+            <div class="layui-input-block">
+                <input type="text" name="userId" lay-verify="required" placeholder="请输入所属用户ID" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户类型</label>
+            <div class="layui-input-block">
+                <input type="text" name="userType" lay-verify="required" placeholder="请输入用户类型" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">所属企业ID</label>
+            <div class="layui-input-block">
+                <input type="text" name="ownerComId" lay-verify="required" placeholder="请输入所属企业ID" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">所属企业名</label>
+            <div class="layui-input-block">
+                <input type="text" name="ownerComName" lay-verify="required" placeholder="请输入所属企业名" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">所属量表ID</label>
+            <div class="layui-input-block">
+                <input type="text" name="scaleId" lay-verify="required" placeholder="请输入所属量表ID" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">量表名</label>
+            <div class="layui-input-block">
+                <input type="text" name="scaleName" lay-verify="required" placeholder="请输入量表名" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">量表描述</label>
+            <div class="layui-input-block">
+                <input type="text" name="scaleDescription" lay-verify="required" placeholder="请输入量表描述" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">量表价格</label>
+            <div class="layui-input-block">
+                <input type="text" name="scalePrice" lay-verify="required|number" placeholder="请输入量表价格" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">量表状态</label>
+            <div class="layui-input-block">
+                <input type="text" name="scaleState" lay-verify="required" placeholder="请输入量表状态" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">题目数量</label>
+            <div class="layui-input-block">
+                <input type="text" name="questionSumNum" lay-verify="required|number" placeholder="请输入题目数量" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">已完成题数量</label>
+            <div class="layui-input-block">
+                <input type="text" name="questionFinishedNum" lay-verify="required|number" placeholder="请输入已完成题数量" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">当前题号</label>
+            <div class="layui-input-block">
+                <input type="text" name="currentQuestionNum" lay-verify="required|number" placeholder="请输入当前题号" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">分数</label>
+            <div class="layui-input-block">
+                <input type="text" name="scaleScore" lay-verify="required|number" placeholder="请输入分数" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">小图</label>
+            <div class="layui-input-block">
+                <input type="text" name="smallImageUrl" lay-verify="required" placeholder="请输入小图" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">大图</label>
+            <div class="layui-input-block">
+                <input type="text" name="bigImageUrl" lay-verify="required" placeholder="请输入大图" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">开始时间</label>
+            <div class="layui-input-block">
+                <input type="text" name="startTime" id="startTime" lay-verify="required" placeholder="请输入开始时间" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">结束时间</label>
+            <div class="layui-input-block">
+                <input type="text" name="endTime" id="endTime" lay-verify="required" placeholder="请输入结束时间" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="ScaleUserScale-form-submit" id="ScaleUserScale-form-submit" value="确认添加">
+    </div>
+</div>
+
+<script src="../../../../../layuiadmin/layui/layui.js"></script>
+<script>
+        layui.config({
+            base: '../../../../../layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index', 'form','laydate'], function(){
+            var $ = layui.$
+                ,laydate = layui.laydate
+                ,admin  = layui.admin
+                ,form = layui.form;
+
+            //监听提交
+            form.on('submit(ScaleUserScale-form-submit)', function(data){
+                var field = data.field; //获取提交的字段
+                var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                //提交 Ajax 成功后，关闭当前弹层并重载表格
+                admin.req({
+                    url:layui.setter.basePath +'/admin/scaleUserScale/saveOrUpdate.jsn',
+                    data:field,
+                    method:"post",
+                    success:function (data) {
+                        parent.layui.table.reload('ScaleUserScale-list'); //重载表格
+                        parent.layer.close(index); //再执行关闭
+                        parent.layer.msg('添加成功', {
+                            icon: 1
+                        });
+                    },
+                });
+
+            });
+            laydate.render({
+                elem: '#createTime', //指定元素
+                type:'datetime'
+            });
+            laydate.render({
+                elem: '#startTime', //指定元素
+                type:'datetime'
+            });
+            laydate.render({
+                elem: '#endTime', //指定元素
+                type:'datetime'
+            });
+        })
+</script>
+</body>
+</html>

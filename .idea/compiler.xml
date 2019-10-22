@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="common-base" />
+        <module name="sys-mng-web" />
+        <module name="tdp-codegen" />
+        <module name="scale-mng-web" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="common-base" target="1.8" />
+      <module name="project" target="1.8" />
+      <module name="scale" target="1.8" />
+      <module name="scale-mng-web" target="1.8" />
+      <module name="sys-mng-web" target="1.8" />
+      <module name="tdp-codegen" target="1.7" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="common-base" options="-parameters" />
+      <module name="scale-mng-web" options="-parameters" />
+      <module name="sys-mng-web" options="-parameters" />
+    </option>
+  </component>
+</project>

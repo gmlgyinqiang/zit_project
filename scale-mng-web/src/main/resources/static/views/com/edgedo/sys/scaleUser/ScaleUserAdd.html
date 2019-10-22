@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>新增</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../../../layuiadmin/layui/css/layui.css" media="all">
+</head>
+<body>
+
+<div class="layui-form" lay-filter="ScaleUser-form" id="ScaleUser-form" style="padding: 20px 30px 0 0;">
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户名</label>
+            <div class="layui-input-block">
+                <input type="text" name="userName" lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">性别</label>
+            <div class="layui-input-block">
+                <input type="text" name="userSex" lay-verify="required" placeholder="请输入性别" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">年龄</label>
+            <div class="layui-input-block">
+                <input type="text" name="userAge" lay-verify="required" placeholder="请输入年龄" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">手机号</label>
+            <div class="layui-input-block">
+                <input type="text" name="phoneNum" lay-verify="required" placeholder="请输入手机号" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户类型</label>
+            <div class="layui-input-block">
+                <input type="text" name="userType" lay-verify="required" placeholder="请输入用户类型" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">所属企业ID</label>
+            <div class="layui-input-block">
+                <input type="text" name="ownerComId" lay-verify="required" placeholder="请输入所属企业ID" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">所属企业名</label>
+            <div class="layui-input-block">
+                <input type="text" name="ownerComName" lay-verify="required" placeholder="请输入所属企业名" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户状态</label>
+            <div class="layui-input-block">
+                <input type="text" name="userState" lay-verify="required" placeholder="请输入用户状态" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="ScaleUser-form-submit" id="ScaleUser-form-submit" value="确认添加">
+    </div>
+</div>
+
+<script src="../../../../../layuiadmin/layui/layui.js"></script>
+<script>
+        layui.config({
+            base: '../../../../../layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index', 'form','laydate'], function(){
+            var $ = layui.$
+                ,laydate = layui.laydate
+                ,admin  = layui.admin
+                ,form = layui.form;
+
+            //监听提交
+            form.on('submit(ScaleUser-form-submit)', function(data){
+                var field = data.field; //获取提交的字段
+                var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                //提交 Ajax 成功后，关闭当前弹层并重载表格
+                admin.req({
+                    url:layui.setter.basePath +'/admin/scaleUser/saveOrUpdate.jsn',
+                    data:field,
+                    method:"post",
+                    success:function (data) {
+                        parent.layui.table.reload('ScaleUser-list'); //重载表格
+                        parent.layer.close(index); //再执行关闭
+                        parent.layer.msg('添加成功', {
+                            icon: 1
+                        });
+                    },
+                });
+
+            });
+            laydate.render({
+                elem: '#createTime', //指定元素
+                type:'datetime'
+            });
+        })
+</script>
+</body>
+</html>

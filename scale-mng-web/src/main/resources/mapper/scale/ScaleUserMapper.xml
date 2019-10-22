@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.edgedo.sys.mapper.ScaleUserMapper" >
+   
+   
+    <resultMap id="BaseResultMap" type="com.edgedo.sys.entity.ScaleUser" >
+			<id column="ID" property="id"/>
+			<result column="CREATE_TIME" property="createTime"/>
+			<result column="USER_NAME" property="userName"/>
+			<result column="USER_SEX" property="userSex"/>
+			<result column="USER_AGE" property="userAge"/>
+			<result column="PHONE_NUM" property="phoneNum"/>
+			<result column="USER_EMAIL" property="userEmail"/>
+			<result column="USER_DEPARTMENT" property="userDepartment"/>
+			<result column="JOB_NUMBER" property="jobNumber"/>
+			<result column="USER_TYPE" property="userType"/>
+			<result column="OWNER_COM_ID" property="ownerComId"/>
+			<result column="OWNER_COM_NAME" property="ownerComName"/>
+			<result column="USER_STATE" property="userState"/>
+    </resultMap>
+   
+    <resultMap id="BaseResultViewMap" type="com.edgedo.sys.queryvo.ScaleUserView" extends="BaseResultMap">
+    
+    </resultMap>
+  
+  
+  <!-- ******* 新增字段请修改这里  ******  -->
+  <sql id="Base_Column_List">
+	 ID, CREATE_TIME, USER_NAME, USER_SEX, USER_AGE, PHONE_NUM, USER_TYPE, OWNER_COM_ID, OWNER_COM_NAME, USER_STATE, USER_EMAIL, USER_DEPARTMENT, JOB_NUMBER
+  </sql>
+  
+  <!-- ******* 利用好这里的动态查询条件  ******  -->
+  <sql id="where">
+  	<where>
+		USER_STATE='ACTIVE'
+		<if test='queryObj != null and  queryObj.userName != null and @org.apache.commons.lang3.StringUtils@isNotEmpty(queryObj.userName)'>
+			AND  USER_NAME like concat('%',#{queryObj.userName},'%')
+		</if>
+		<if test='queryObj != null and  queryObj.phoneNum != null and @org.apache.commons.lang3.StringUtils@isNotEmpty(queryObj.phoneNum)'>
+			AND  PHONE_NUM like concat('%',#{queryObj.phoneNum},'%')
+		</if>
+		<if test='queryObj != null and  queryObj.ownerComName != null and @org.apache.commons.lang3.StringUtils@isNotEmpty(queryObj.ownerComName)'>
+			AND  OWNER_COM_NAME like concat('%',#{queryObj.ownerComName},'%')
+		</if>
+		<if test='queryObj != null and  queryObj.ownerComId != null and @org.apache.commons.lang3.StringUtils@isNotEmpty(queryObj.ownerComId)'>
+			AND  OWNER_COM_ID = #{queryObj.ownerComId}
+		</if>
+
+		<if test='queryObj != null and  queryObj.userType != null and @org.apache.commons.lang3.StringUtils@isNotEmpty(queryObj.userType)'>
+			AND  USER_TYPE = #{queryObj.userType}
+		</if>
+  	</where>
+  	
+  </sql>
+  
+  <!-- ******* 排序判断  ******  
+  <sql id="orderBy">
+  	<if test="orderBy != null and orderBy!= '' ">
+  		order by  ${orderBy}
+  	</if>
+  </sql>-->
+  
+  
+  <!-- 分页条件查询  -->
+  <select id="listPage" parameterType="com.edgedo.sys.queryvo.ScaleUserQuery" resultMap="BaseResultViewMap">
+  		select <include refid="Base_Column_List"/> from scale_user 
+  		<include refid="where"/>
+  </select>
+  
+   <!-- 不分页条件查询  -->
+  <select id="listByObj" parameterType="com.edgedo.sys.queryvo.ScaleUserQuery" resultMap="BaseResultViewMap">
+  		select <include refid="Base_Column_List"/> from scale_user 
+  		<include refid="where"/>
+  </select>
+
+	<select id="listNotSelected" parameterType="com.edgedo.sys.queryvo.ScaleUserQuery" resultMap="BaseResultViewMap">
+		select <include refid="Base_Column_List"/> from scale_user
+		<include refid="where"/>
+		<if test="orderCode != null and orderCode != ''">
+			and ID not in(
+				select OWNER_USER_ID from scale_user_order where DATA_STATE='1' and ORDER_CODE=#{orderCode,jdbcType=VARCHAR} and OWNER_USER_ID is not NULL
+			)
+		</if>
+	</select>
+
+	<select id="selectWorkerNotSelected" parameterType="com.edgedo.sys.queryvo.ScaleUserQuery" resultMap="BaseResultViewMap">
+		select <include refid="Base_Column_List"/> from scale_user
+		<include refid="where"/>
+		<if test="companyOrderId != null and companyOrderId != ''">
+			and ID not in(
+			select OWNER_USER_ID from scale_user_order where DATA_STATE='1' and COMPANY_ORDER_ID=#{companyOrderId,jdbcType=VARCHAR} and OWNER_USER_ID is not NULL
+			)
+		</if>
+	</select>
+
+	<select id="countByPhoneNum" parameterType="java.lang.String" resultType="int">
+		select count(1) from scale_user
+		where USER_STATE = 'ACTIVE'
+		and PHONE_NUM = #{phoneNum,jdbcType=VARCHAR}
+	</select>
+  
+  <select id="getInfoById" parameterType="java.lang.String" resultMap="BaseResultViewMap">
+	  select USER_NAME,USER_EMAIL  from scale_user
+	  where ID=  #{userId,jdbcType=VARCHAR}
+  </select>
+
+	<!-- 新增根据订单用户id查询对应的电话号 -->
+	<select id="ownerUserId" parameterType="java.lang.String" resultType="String">
+  select PHONE_NUM from scale_user
+  where USER_STATE = 'ACTIVE'
+  and ID= #{id,jdbcType=VARCHAR}
+ </select>
+</mapper>

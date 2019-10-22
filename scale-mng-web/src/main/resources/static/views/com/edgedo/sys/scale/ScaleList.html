@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>标题</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../../../layuiadmin/style/admin.css" media="all">
+    <link rel="stylesheet" href="../../css/viewer.css" media="all">
+    <script type="text/javascript" src="../../js/jquery-1.8.3.js"></script>
+    <script type="text/javascript" src="../../js/viewer.js"></script>
+    <style type="text/css">
+        .layui-table-cell {
+            padding: 0 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+                <!--<div class="layui-inline">-->
+                    <!--<label class="layui-form-label">量表名</label>-->
+                    <!--<div class="layui-input-inline">-->
+                        <!--<input type="text" name="queryObj.scaleName" placeholder="请输入量表名" autocomplete="off" class="layui-input">-->
+                    <!--</div>-->
+                <!--</div>-->
+               <div class="layui-inline">
+                    <label class="layui-form-label">类型</label>
+                    <div class="layui-input-inline">
+                        <select name="queryObj.scaleName" lay-search="">
+                            <option value=""></option>
+                            <option value="应对方式问卷(CWQ)">应对方式问卷(CWQ)</option>
+                            <option value="抑郁自评量表(SDS)">抑郁自评量表(SDS)</option>
+                            <option value="工作压力问卷(WSQ)">工作压力问卷(WSQ)</option>
+                            <option value="焦虑自评量表(SAS)">焦虑自评量表(SAS)</option>
+                            <option value="症状自评量表(SCL-90)">症状自评量表(SCL-90)</option>
+                            <option value="一般健康问卷(GHQ)">一般健康问卷(GHQ)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button class="layui-btn layuiadmin-btn-comm" data-type="reload" lay-submit lay-filter="Scale-search">
+                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="layui-card-body">
+            <div style="padding-bottom: 10px;">
+                <button class="layui-btn layuiadmin-btn-comm" data-type="batchdel">删除</button>
+                <!--<button class="layui-btn layuiadmin-btn-comm" data-type="add">添加</button>-->
+            </div>
+            <table id="Scale-list" lay-filter="Scale-list"></table>
+            <script type="text/html" id="table-Scale-list">
+                <!--<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="questionMng">问题管理</a>-->
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+            </script>
+        </div>
+    </div>
+</div>
+<script src="../../../../../layuiadmin/layui/layui.js"></script>
+
+<script type="text/html" id="titleTpl">
+
+    {{# if(d.dataState=='0'){d.dataState='停用' }}
+    <span style="color: #000000"> {{d.dataState}}</span>
+
+
+
+    {{# } }}
+
+
+    {{# if(d.dataState=='1'){d.dataState='启用' }}
+    <span style="color: #000000"> {{d.dataState}}</span>
+
+
+
+    {{# } }}
+</script>
+<script>
+        layui.config({
+            base: '../../../../../layuiadmin/' //静态资源所在路径
+        }).extend({
+            index:'lib/index',
+            common:'common'
+        }).use(['index','table', 'form','common'], function(exports){
+            var $ = layui.$
+                ,table = layui.table
+                ,common = layui.common
+                ,admin = layui.admin
+                ,form = layui.form;
+
+            //查询
+            form.on('submit(Scale-search)', function(data){
+                var field = data.field;
+
+                //执行重载
+                table.reload('Scale-list', {
+                    where: field
+                });
+            });
+
+            /*
+            * 定义表格
+            * */
+            defineTable = function () {
+                var headers = layui.admin.getTokenHeader();
+                table.render({
+                    elem: '#Scale-list' //指定原始表格的选择器（id选择器）
+                    ,url:layui.setter.basePath +'/admin/scale/listpage.jsn' //模拟接口
+                    ,headers:headers
+                    ,method: 'post'
+                    ,parseData: function(res){ //res 即为原始返回的数据
+                        return {
+                            "code": res.success, //解析接口状态
+                            "msg": res.errMsg, //解析提示文本
+                            "count": res.totalCount, //解析数据长度
+                            "data": res.list //解析数据列表
+                        };
+                    }
+                    ,response: {
+                        statusCode: true //规定成功的状态码，默认：0
+                    }
+                    ,cols: [[
+                        {type: 'checkbox', fixed: 'left'}
+                    ,{type: 'numbers', align: 'center',title: '序号',width: '5%'}
+                    ,{field: 'createTime',align: 'center', width: '10%', title: '修改时间',templet: function(d){
+                    return common.DateFormat(d.createTime,"yyyy-MM-dd hh:mm:ss");},sort: true}
+            ,{field: 'scaleName',align: 'center', width: '20%', title: '量表名',sort: true}
+            ,{field: 'questionSumNum',align: 'center', width:'10%' , title: '题目数量',sort: true}
+            ,{field: 'scalePrice',align: 'center', width: '10%', title: '量表价格',sort: true},
+                        {field: 'discountPrice',align: 'center', width: '10%', title: '量表折扣价格',sort: true},{
+                        field: 'discountState',align: 'center', width: '10%', title: '是否折扣',
+                            templet: function(d){
+                                if(d.discountState=='1'){
+                                    return '是';
+                                }else if (d.discountState=='0'){
+                                    return '否';
+                                }else{
+                                    return 'error';
+                                }
+                            }
+                        }
+            ,{field: 'testPeopleNum',align: 'center', width: '10%', title: '已测人数·',sort: true}
+            ,{field: 'smallImageUrl',align: 'center', width: '10%', title: '缩略图',
+                            templet: '' +
+                                '<div>' +
+                                '<ul id="{{d.id}}1"  style="list-style: none;">' +
+                                '<li>' +
+                                '<img style="height: 30px;" src="{{d.smallImageUrl}}" onclick="getImg(\'' + '{{d.id}}1' + '\')">' +
+                                '</li>' +
+                                '</ul>' +
+                                '</div>'}
+            ,{field: 'bigImageUrl',align: 'center', width: '10%', title: '详情图',
+                            templet: '' +
+                                '<div>' +
+                                '<ul id="{{d.id}}2"  style="list-style: none;">' +
+                                '<li>' +
+                                '<img style="height: 30px;" src="{{d.bigImageUrl}}" onclick="getImg(\'' + '{{d.id}}2' + '\')">' +
+                                '</li>' +
+                                '</ul>' +
+                                '</div>'}
+          /*  ,{field: 'dataState',align: 'center', width: 200, title: '数据状态',sort: true,templet:'#titleTpl'}*/
+                    ,{title: '操作', minWidth: 150, align: 'center', fixed: 'right', toolbar: '#table-Scale-list'}
+            ]]
+            ,autoSort: false
+                    ,page: true
+                    ,limit: 10
+                    ,limits: [10, 20, 30,40]
+                    ,text: {
+                    none: '暂无相关数据'
+                }
+            });
+
+                //为toolbar添加事件响应
+                table.on('tool(Scale-list)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+                    /*var data = obj.data;*///获得当前行数据
+                    //区分事件
+                    switch(obj.event){
+                        case 'del':
+                            deleteVo(obj);
+                            break;
+                        case 'edit':
+                            editVo(obj);
+                            break;
+                        case 'questionMng':
+                            questionMngVo(obj);
+                            break;
+                    };
+                });
+
+                //监听排序事件
+                table.on('sort(Scale-list)', function(obj){ //注：sort是工具条事件名，LAY-app-province-list是table原始容器的属性 lay-filter="对应的值"
+                    var sort = obj.field;
+                    //默认排序
+                    switch(obj.field){
+                        case 'id':
+                            sort ="ID";
+                            break;
+                        case 'createTime':
+                            sort ="CREATE_TIME";
+                            break;
+                        case 'scaleName':
+                            sort ="SCALE_NAME";
+                            break;
+                        case 'scaleDescription':
+                            sort ="SCALE_DESCRIPTION";
+                            break;
+                        case 'scalePrice':
+                            sort ="SCALE_PRICE";
+                            break;
+                        case 'questionSumNum':
+                            sort ="QUESTION_SUM_NUM";
+                            break;
+                        case 'testPeopleNum':
+                            sort ="TEST_PEOPLE_NUM";
+                            break;
+                        case 'smallImageUrl':
+                            sort ="SMALL_IMAGE_URL";
+                            break;
+                        case 'bigImageUrl':
+                            sort ="BIG_IMAGE_URL";
+                            break;
+                        case 'dataState':
+                            sort ="DATA_STATE";
+                            break;
+                        case 'discountPrice':
+                            sort ="DISCOUNT_PRICE";
+                            break;
+                        case 'discountPrice':
+                            sort ="DISCOUNT_STATE";
+                            break;
+                    };
+                    if(obj.type==null){
+                        return;
+                    }
+                    //有些时候，你可能需要根据当前排序的字段，重新向服务端发送请求，从而实现服务端排序，如：
+                    table.reload('Scale-list', {
+                        initSort: obj//记录初始排序，如果不设的话，将无法标记表头的排序状态。
+                        ,where: { //请求参数（注意：这里面的参数可任意定义，并非下面固定的格式）
+                            orderBy: sort+" "+obj.type //排序字段
+                        }
+                    });
+                });
+            }
+            defineTable();
+
+            //删除
+            deleteVo = function (obj) {
+                layer.confirm('确定删除此记录吗？', function(index){
+                    admin.req({
+                        url:layui.setter.basePath +'/admin/scale/deleteByIds.jsn',
+                        data:{'ids':obj.data.id},
+                        method:"post",
+                        success:function (data) {
+                            table.reload('Scale-list',
+                                {page:
+                                    { curr: common.deleteJumpPage(obj) // 执行页面跳转方法
+                                    }
+                                }
+                            );
+                            layer.close(index);
+                            layer.msg('删除成功', {
+                                icon: 1
+                            });
+                        },
+                    });
+                });
+            }
+            //编辑
+            editVo = function (obj) {
+                layer.open({
+                    type: 2
+                    ,title: '编辑'
+                    ,content: 'ScaleEdit.html'
+                    ,maxmin: true
+                    ,area: ['550px', '550px']
+                    ,btn: ['确定', '取消']
+                    ,success: function(layero, index){
+                        var s = layero.find('iframe');
+                        $("id",s[0].contentWindow.document).val(obj.data.id);
+                        //给iframe元素赋值
+                        var othis = layero.find('iframe').contents().find("#Scale-form").click();
+
+                        othis.find('input[name="id"]').val(obj.data.id);
+                        othis.find('input[name="createTime"]').val(obj.data.createTime);
+                        othis.find('input[name="scaleName"]').val(obj.data.scaleName);
+                        othis.find('textarea[name="scaleDescription"]').val(obj.data.scaleDescription);
+                        othis.find('input[name="scalePrice"]').val(obj.data.scalePrice);
+                        othis.find('input[name="discountPrice"]').val(obj.data.discountPrice);
+                        othis.find('input[name="discountState"]').val(obj.data.discountState);
+                        othis.find('input[name="testPeopleNum"]').val(obj.data.testPeopleNum);
+                        /*othis.find('input[name="smallImageUrl"]').val(obj.data.smallImageUrl);*/
+                        if(obj.data.smallImageUrl!=null && obj.data.smallImageUrl.length>0){
+                            othis.find('input[name="smallImageUrl"]').val(obj.data.smallImageUrl);
+                            othis.find('#hotel-img-preview').attr('src', obj.data.smallImageUrl);
+                            othis.find('#preview_contariner').show();
+                        }
+                        if(obj.data.bigImageUrl!=null && obj.data.bigImageUrl.length>0){
+                            othis.find('input[name="bigImageUrl"]').val(obj.data.bigImageUrl);
+                            othis.find('#hotel-img-preview1').attr('src', obj.data.bigImageUrl);
+                            othis.find('#preview_contariner1').show();
+                        }
+                        //othis.find('input[name="bigImageUrl"]').val(obj.data.bigImageUrl);
+                        othis.find('input[name="dataState"]').val(obj.data.dataState);
+                    }
+                    ,yes: function(index, layero){
+                        var submit = layero.find('iframe').contents().find("#Scale-form-edit");
+                        submit.trigger('click');
+                    }
+                });
+            }
+            //问题管理
+           /* questionMngVo = function (obj) {
+                var scale = obj.data;
+                parent.layui.index.openTabsPage('views/com/edgedo/sys/scaleQuestion/ScaleQuestionList.html?scaleId='+scale.id+'&scaleName='+encodeURI(scale.scaleName),'问题管理');
+            };*/
+            //点击事件
+            var active = {
+                //批量删除
+                batchdel: function(){
+                    var checkStatus = table.checkStatus('Scale-list')
+                        ,checkData = checkStatus.data; //得到选中的数据
+
+                    if(checkData.length === 0){
+                        return layer.msg('请选择数据');
+                    }
+
+                    layer.confirm('确定删除吗？', function(index) {
+                        var ids = "" ;
+                        for(var i = 0;i<checkData.length;i++){
+                            if(ids==""){
+                                ids= checkData[i].id;
+                            }else {
+                                ids = ids+","+checkData[i].id;
+                            }
+                        }
+                        admin.req({
+                            url:layui.setter.basePath +'/admin/scale/deleteByIds.jsn',
+                            data:{'ids':ids},
+                            method:"post",
+                            success:function (data) {
+                                table.reload('Scale-list',
+                                    {page:
+                                        { curr: common.deleteDulJumpPage(checkStatus) // 执行页面跳转方法
+                                        }
+                                    }
+                                );
+                                layer.msg('删除成功', {
+                                    icon: 1
+                                });
+                            },
+                        });
+                    });
+                }
+                //添加
+                ,add: function(){
+                    layer.open({
+                        type: 2
+                        ,title: '添加'
+                        ,content: 'ScaleAdd.html'
+                        ,maxmin: true
+                        ,area: ['550px', '550px']
+                        ,btn: ['确定', '取消']
+                        ,yes: function(index, layero){
+                            //点击确认触发 iframe 内容中的按钮提交
+                            var submit = layero.find('iframe').contents().find("#Scale-form-submit");
+                            submit.click();
+                        }
+                    });
+                }
+            }
+            //绑定点击事件
+            $('.layui-btn.layuiadmin-btn-comm').on('click', function(){
+                var type = $(this).data('type');
+                active[type] ? active[type].call(this) : '';
+            });
+
+
+        });
+
+        function getImg(id) {
+            $("#" + id).viewer();
+        }
+
+</script>
+</body>
+</html>
+

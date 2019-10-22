@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>新增</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../../../layuiadmin/style/formSelects/formSelects-v4.css" media="all">
+</head>
+<body>
+
+<div class="layui-form" lay-filter="ScaleCompanyOrder-form" id="ScaleCompanyOrder-form" style="padding: 20px 30px 0 0;">
+        <div class="layui-form-item">
+            <label class="layui-form-label">量表名</label>
+            <div class="layui-input-block">
+                <select  id="scaleListSelect" name="scaleIds" xm-select="scaleListSelect" xm-select-search="" xm-select-search-type="dl">
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">总次数</label>
+            <div class="layui-input-block">
+                <input type="text" name="sumNum" lay-verify="required|number" placeholder="请输入总次数" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">开始时间</label>
+            <div class="layui-input-block">
+                <input type="text" name="startTime" id="startTime" lay-verify="required" placeholder="请输入开始时间" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">结束时间</label>
+            <div class="layui-input-block">
+                <input type="text" name="endTime" id="endTime" lay-verify="required" placeholder="请输入结束时间" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="ScaleCompanyOrder-form-submit" id="ScaleCompanyOrder-form-submit" value="确认添加">
+    </div>
+</div>
+
+<script id="scaleOptionList" type="text/html">
+    {{#  layui.each(d.data, function(index, item){ }}
+    <option value="{{item.id}}">{{ item.scaleName }}</option>
+    {{#  }); }}
+</script>
+<script src="../../../../../layuiadmin/layui/layui.js"></script>
+<script src="../../../../../layuiadmin//style/formSelects/formSelects-v4.js"></script>
+<script>
+        layui.config({
+            base: '../../../../../layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index', 'form','laydate'], function(){
+            var laytpl = layui.laytpl;
+            var $ = layui.$
+                ,laydate = layui.laydate
+                ,admin  = layui.admin
+                ,formSelects = layui.formSelects
+                ,form = layui.form;
+
+            selectAllScale();
+
+            //监听提交
+            form.on('submit(ScaleCompanyOrder-form-submit)', function(data){
+                var field = data.field; //获取提交的字段
+                var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                //提交 Ajax 成功后，关闭当前弹层并重载表格
+                admin.req({
+                    url:layui.setter.basePath +'/admin/scaleCompanyOrder/companyAddScale.jsn',
+                    data:field,
+                    method:"post",
+                    success:function (data) {
+                        parent.layui.table.reload('ScaleCompanyOrder-list'); //重载表格
+                        parent.layer.close(index); //再执行关闭
+                        parent.layer.msg('添加成功', {
+                            icon: 1
+                        });
+                    },
+                });
+
+            });
+
+            //查询量表
+            function selectAllScale(){
+                admin.req({
+                    //url:layui.setter.basePath + '/admin/scale/listAllScaleNotSelected.jsn',
+                    url:layui.setter.basePath + '/admin/scale/listByObj.jsn',
+                    data:{},
+                    method:'post',
+                    success:function(data){
+                        debugger;
+                        var getTpl = document.getElementById("scaleOptionList").innerHTML,
+                            view = document.getElementById("scaleListSelect");
+                        laytpl(getTpl).render(data, function(html){
+                            view.innerHTML = html;
+                            //刷新表单渲染
+                            form.render();
+                            //刷新下拉多选渲染
+                            formSelects.render();
+                        });
+
+                    }
+                })
+            }
+
+            laydate.render({
+                elem: '#startTime', //指定元素
+                type:'datetime',
+                trigger:'click'
+            });
+            laydate.render({
+                elem: '#endTime', //指定元素
+                type:'datetime',
+                trigger:'click'
+            });
+        })
+</script>
+</body>
+</html>

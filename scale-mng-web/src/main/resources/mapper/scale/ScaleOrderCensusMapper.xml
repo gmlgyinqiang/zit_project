@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.edgedo.sys.mapper.ScaleOrderCensusMapper" >
+   
+   
+    <resultMap id="BaseResultMap" type="com.edgedo.sys.entity.ScaleOrderCensus" >
+			<id column="ID" property="id"/>
+			<result column="WFK_COUNT" property="wfkCount"/>
+			<result column="YZF_COUNT" property="yzfCount"/>
+			<result column="CPZ_COUNT" property="cpzCount"/>
+			<result column="YWC_COUNT" property="ywcCount"/>
+			<result column="ALL_PRICE" property="allPrice"/>
+    </resultMap>
+   
+    <resultMap id="BaseResultViewMap" type="com.edgedo.sys.queryvo.ScaleOrderCensusView" extends="BaseResultMap">
+    
+    </resultMap>
+  
+  
+  <!-- ******* 新增字段请修改这里  ******  -->
+  <sql id="Base_Column_List">
+	 ID, WFK_COUNT, YZF_COUNT, CPZ_COUNT, YWC_COUNT, ALL_PRICE
+  </sql>
+  
+  <!-- ******* 利用好这里的动态查询条件  ******  -->
+  <sql id="where">
+  	<where>
+				<if test='queryObj != null and  queryObj.wfkCount != null and @org.apache.commons.lang3.StringUtils@isNotEmpty(queryObj.wfkCount)'>
+					AND  WFK_COUNT = #{queryObj.wfkCount}
+				</if>
+				<if test='queryObj != null and  queryObj.yzfCount != null and @org.apache.commons.lang3.StringUtils@isNotEmpty(queryObj.yzfCount)'>
+					AND  YZF_COUNT = #{queryObj.yzfCount}
+				</if>
+				<if test='queryObj != null and  queryObj.cpzCount != null and @org.apache.commons.lang3.StringUtils@isNotEmpty(queryObj.cpzCount)'>
+					AND  CPZ_COUNT = #{queryObj.cpzCount}
+				</if>
+				<if test='queryObj != null and  queryObj.ywcCount != null and @org.apache.commons.lang3.StringUtils@isNotEmpty(queryObj.ywcCount)'>
+					AND  YWC_COUNT = #{queryObj.ywcCount}
+				</if>
+  	</where>
+  	
+  </sql>
+  
+  <!-- ******* 排序判断  ******  
+  <sql id="orderBy">
+  	<if test="orderBy != null and orderBy!= '' ">
+  		order by  ${orderBy}
+  	</if>
+  </sql>-->
+  
+  
+  <!-- 分页条件查询  -->
+  <select id="listPage" parameterType="com.edgedo.sys.queryvo.ScaleOrderCensusQuery" resultMap="BaseResultViewMap">
+  		select <include refid="Base_Column_List"/> from scale_order_census 
+  		<include refid="where"/>
+  </select>
+  
+   <!-- 不分页条件查询  -->
+  <select id="listByObj" parameterType="com.edgedo.sys.queryvo.ScaleOrderCensusQuery" resultMap="BaseResultViewMap">
+  		select <include refid="Base_Column_List"/> from scale_order_census 
+  		<include refid="where"/>
+  </select>
+  
+  
+</mapper>

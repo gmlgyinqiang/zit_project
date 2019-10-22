@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.edgedo.sys.mapper.ScaleCompanyOrderMapper" >
+   
+   
+    <resultMap id="BaseResultMap" type="com.edgedo.sys.entity.ScaleCompanyOrder" >
+			<id column="ID" property="id"/>
+			<result column="CREATE_TIME" property="createTime"/>
+			<result column="OWNER_COMPANY_ID" property="ownerCompanyId"/>
+			<result column="OWNER_COMPANY_NAME" property="ownerCompanyName"/>
+			<result column="SCALE_ID" property="scaleId"/>
+			<result column="SCALE_NAME" property="scaleName"/>
+			<result column="SUM_NUM" property="sumNum"/>
+			<result column="USED_NUM" property="usedNum"/>
+			<result column="USABLE_NUM" property="usableNum"/>
+			<result column="START_TIME" property="startTime"/>
+			<result column="END_TIME" property="endTime"/>
+			<result column="DATA_STATE" property="dataState"/>
+    </resultMap>
+   
+    <resultMap id="BaseResultViewMap" type="com.edgedo.sys.queryvo.ScaleCompanyOrderView" extends="BaseResultMap">
+    
+    </resultMap>
+  
+  
+  <!-- ******* 新增字段请修改这里  ******  -->
+  <sql id="Base_Column_List">
+	 ID, CREATE_TIME, OWNER_COMPANY_ID, OWNER_COMPANY_NAME, SCALE_ID, SCALE_NAME, SUM_NUM, USED_NUM, USABLE_NUM, START_TIME, END_TIME, DATA_STATE
+  </sql>
+  
+  <!-- ******* 利用好这里的动态查询条件  ******  -->
+  <sql id="where">
+  	<where>
+				<if test='queryObj != null and  queryObj.createTime != null'>
+					AND  CREATE_TIME = #{queryObj.createTime}
+				</if>
+				<if test='queryObj != null and  queryObj.ownerCompanyName != null and @org.apache.commons.lang3.StringUtils@isNotEmpty(queryObj.ownerCompanyName)'>
+					AND  OWNER_COMPANY_NAME like concat('%',#{queryObj.ownerCompanyName},'%')
+				</if>
+				<if test='queryObj != null and  queryObj.scaleName != null and @org.apache.commons.lang3.StringUtils@isNotEmpty(queryObj.scaleName)'>
+					AND  SCALE_NAME like concat('%',#{queryObj.scaleName},'%')
+				</if>
+				<if test='queryObj != null and  queryObj.startTime != null'>
+					AND  DATE_FORMAT(END_TIME,'%Y%m%d') <![CDATA[ >= ]]> DATE_FORMAT(#{queryObj.startTime},'%Y%m%d')
+				</if>
+				<if test='queryObj != null and  queryObj.endTime != null'>
+					AND  DATE_FORMAT(END_TIME,'%Y%m%d') <![CDATA[ <= ]]> DATE_FORMAT(#{queryObj.endTime},'%Y%m%d')
+				</if>
+				<if test='queryObj != null and  queryObj.ownerCompanyId != null and @org.apache.commons.lang3.StringUtils@isNotEmpty(queryObj.ownerCompanyId)'>
+					AND  OWNER_COMPANY_ID = #{queryObj.ownerCompanyId}
+				</if>
+  	</where>
+  	
+  </sql>
+  
+  <!-- ******* 排序判断  ******  
+  <sql id="orderBy">
+  	<if test="orderBy != null and orderBy!= '' ">
+  		order by  ${orderBy}
+  	</if>
+  </sql>-->
+  
+  
+  <!-- 分页条件查询  -->
+  <select id="listPage" parameterType="com.edgedo.sys.queryvo.ScaleCompanyOrderQuery" resultMap="BaseResultViewMap">
+  		select <include refid="Base_Column_List"/> from scale_company_order 
+  		<include refid="where"/>
+  </select>
+  
+   <!-- 不分页条件查询  -->
+  <select id="listByObj" parameterType="com.edgedo.sys.queryvo.ScaleCompanyOrderQuery" resultMap="BaseResultViewMap">
+  		select <include refid="Base_Column_List"/> from scale_company_order 
+  		<include refid="where"/>
+  </select>
+  
+  
+</mapper>

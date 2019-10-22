@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/common-base/common-base.iml" filepath="$PROJECT_DIR$/common-base/common-base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/scale.iml" filepath="$PROJECT_DIR$/scale.iml" />
+      <module fileurl="file://$PROJECT_DIR$/scale-mng-web/scale-mng-web.iml" filepath="$PROJECT_DIR$/scale-mng-web/scale-mng-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sys-mng-web/sys-mng-web.iml" filepath="$PROJECT_DIR$/sys-mng-web/sys-mng-web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tdp-codegen/tdp-codegen.iml" filepath="$PROJECT_DIR$/tdp-codegen/tdp-codegen.iml" />
+    </modules>
+  </component>
+</project>

@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>标题</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../../../layuiadmin/style/admin.css" media="all">
+    <style type="text/css">
+        .layui-table-cell {
+            padding: 0 2px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">年月选择</label>
+                        <div class="layui-input-inline">
+                            <input type="text" lay-verify="required" class="layui-input" id="searchTime" name="queryObj.searchTime" placeholder="请选择年月" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <!--<div class="layui-inline">-->
+                        <!--<label class="layui-form-label">开始时间</label>-->
+                        <!--<div class="layui-input-inline">-->
+                            <!--<input type="text" id="payTime" name="queryObj.payTime" placeholder="请选择开始时间" autocomplete="off" class="layui-input">-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<label class="layui-form-label">订单状态</label>-->
+                    <!--<div class="layui-input-inline">-->
+                        <!--<select name="queryObj.orderState">-->
+                            <!--<option value=""></option>-->
+                            <!--<option value="0">未付款</option>-->
+                            <!--<option value="1">已支付</option>-->
+                            <!--<option value="2">测评中</option>-->
+                            <!--<option value="3">已完成</option>-->
+
+                        <!--</select>-->
+                    <!--</div>-->
+
+                    <!--<div class="layui-inline">-->
+                        <!--<label class="layui-form-label">用户名</label>-->
+                        <!--<div class="layui-input-inline">-->
+                            <!--<input type="text" name="queryObj.ownerUserName" placeholder="请输入" autocomplete="off" class="layui-input">-->
+                        <!--</div>-->
+                    <!--</div>-->
+                </div>
+                <div class="layui-inline">
+                    <button class="layui-btn layuiadmin-btn-comm" data-type="reload" lay-submit lay-filter="ScaleUserOrder-search">
+                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                </div>
+                <div class="layui-inline" style="float: right;
+    margin-right: 30px;
+    font-size: 16px;">
+                    <p id="sumPrice"></p>
+                </div>
+            </div>
+        </div>
+        <div class="layui-card-body">
+            <div style="padding-bottom: 10px;">
+                <!--   <button class="layui-btn layuiadmin-btn-comm" data-type="batchdel">删除</button>-->
+                <!--<button class="layui-btn layuiadmin-btn-comm" data-type="add">添加</button>-->
+            </div>
+            <table id="ScaleUserOrder-list" lay-filter="ScaleUserOrder-list"></table>
+            <script type="text/html" id="table-ScaleUserOrder-list">
+                <!--<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>-->
+                <!--<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>-->
+            </script>
+        </div>
+    </div>
+</div>
+<script src="../../../../../layuiadmin/layui/layui.js"></script>
+
+<script type="text/html" id="titleTpl">
+
+    {{# if(d.orderState=='-1'){d.orderState='已支付' }}
+    <span style="color: #000000"> {{d.orderState}}</span>
+    {{# } }}
+
+    {{# if(d.orderState=='1'){d.orderState='已支付' }}
+    <span style="color: #000000"> {{d.orderState}}</span>
+    {{# } }}
+
+    {{# if(d.orderState=='2'){d.orderState='已支付' }}
+    <span style="color: #000000"> {{d.orderState}}</span>
+    {{# } }}
+
+    {{# if(d.orderState=='3'){d.orderState='已支付' }}
+    <span style="color: #000000"> {{d.orderState}}</span>
+    {{# } }}
+
+    {{# if(d.orderState=='4'){d.orderState='已支付' }}
+    <span style="color: #000000"> {{d.orderState}}</span>
+    {{# } }}
+</script>
+
+<script type="text/html" id="titleTpl1">
+
+    {{# if(d.ownerUserType=='0'){d.ownerUserType='普通用户' }}
+    <span style="color: #000000"> {{d.ownerUserType}}</span>
+    {{# } }}
+
+    {{# if(d.ownerUserType=='1'){d.ownerUserType='企业用户' }}
+    <span style="color: #000000"> {{d.ownerUserType}}</span>
+    {{# } }}
+
+
+</script>
+
+<script>
+    layui.config({
+        base: '../../../../../layuiadmin/' //静态资源所在路径
+    }).extend({
+        index:'lib/index',
+        common:'common'
+    }).use(['index','table', 'form','common','laydate'], function(exports){
+        var $ = layui.$
+            ,table = layui.table
+            ,common = layui.common
+            ,admin = layui.admin
+            ,form = layui.form
+            ,laydate = layui.laydate;
+
+        var orderId = getQueryVariable("orderId");
+
+        var currentMonth = Format(new Date(),"yyyy-MM");
+        laydate.render({
+            elem: '#searchTime', //指定元素
+            type:'month',
+            trigger:'click',
+            value:currentMonth
+            ,done: function(value, date, endDate){
+                currentMonth = value;
+        }
+        });
+
+        //汇总金额初始化为当月
+        initCountPrice = function (countMonth) {
+            var searchTime = countMonth+"-01";
+            var year = searchTime.substring(0,4);
+            var month = searchTime.substring(5,7);
+
+            if(countMonth!=null && countMonth !=''){
+                admin.req({
+                    url:layui.setter.basePath +'/admin/scaleUserOrder/sumPriceByMonth.jsn',
+                    data:{'queryObj.channelId':orderId,'countMonth':searchTime},
+                    method:"post",
+                    success:function (data) {
+                        $("#sumPrice")[0].innerHTML = year+"年"+month+"月"+"汇总金额："+data.data+"元";
+                    },
+                });
+            }
+        }
+        initCountPrice(currentMonth);
+
+        //查询
+        form.on('submit(ScaleUserOrder-search)', function(data){
+            var field = data.field;
+            var searchTime = field["queryObj.searchTime"];
+            if(searchTime!=null && searchTime!=""){
+                field["queryObj.searchTime"] = searchTime+"-01";
+            }
+            //执行重载
+            table.reload('ScaleUserOrder-list', {
+                where: field
+            });
+
+            initCountPrice(currentMonth);
+        });
+
+        /*
+        * 定义表格
+        * */
+        defineTable = function () {
+            var headers = layui.admin.getTokenHeader();
+            table.render({
+                elem: '#ScaleUserOrder-list' //指定原始表格的选择器（id选择器）
+                ,url:layui.setter.basePath +'/admin/scaleUserOrder/listpageForOrderId.jsn' //模拟接口
+                ,headers:headers
+                ,method: 'post'
+                ,where:{'queryObj.channelId':orderId}
+
+                ,parseData: function(res){ //res 即为原始返回的数据
+                    return {
+                        "code": res.success, //解析接口状态
+                        "msg": res.errMsg, //解析提示文本
+                        "count": res.totalCount, //解析数据长度
+                        "data": res.list //解析数据列表
+                    };
+                }
+                ,response: {
+                    statusCode: true //规定成功的状态码，默认：0
+                }
+                ,cols: [[
+                    /* {type: 'checkbox', fixed: 'left'}*/
+//                    ,{field: 'id',align: 'center', width: 200, title: '主键',sort: true,hide:true}
+                    // ,{field: 'createTime',align: 'center', width: '15%', title: '创建时间',templet: function(d){
+                    //         return common.DateFormat(d.createTime,"yyyy-MM-dd hh:mm:ss");},sort: true}
+                    /*        ,{field: 'scaleId',align: 'center', width: 200, title: '量表ID',sort: true,hide:true}*/
+                    {field: 'scaleName',align: 'center', width: '25%', title: '量表名',sort: true}
+                    ,{field: 'price',align: 'center', width: '10%', title: '售价',sort: true}
+                    /*    ,{field: 'oraPrice',align: 'center', width: 200, title: '原价',sort: true,hide:true}*/
+                    ,{field: 'orderState',align: 'center', width: '10%', title: '订单状态',sort: true,templet:'#titleTpl'}
+                    ,{field: 'payTime',align: 'center', width: '15%', title: '支付时间',templet: function(d){
+                            if(d.payTime==null){
+                                return ""
+                            }
+                        return Format(d.payTime,"yyyy-MM-dd hh:mm:ss");},sort: true}
+                    /*    ,{field: 'ownerUserId',align: 'center', width: 200, title: '所属用户ID',sort: true,hide:true}*/
+                    ,{field: 'ownerUserName',align: 'center', width: '20%', title: '所属用户名',sort: true}
+                    ,{field: 'channelName',align: 'center', width: '20%', title: '渠道名',sort: true}
+                    // ,{field: 'ownerUserType',align: 'center', width: '10%', title: '用户类型',sort: true,templet:'#titleTpl1'}
+                    /*,{field: 'ownerComId',align: 'center', width: 200, title: '所属企业ID',sort: true,hide:true}*/
+                    /*   ,{field: 'ownerComName',align: 'center', width: 200, title: '所属企业名',sort: true}*/
+                    /* ,{field: 'orderCode',align: 'center', width: 200, title: '订单编号',sort: true,hide:true}
+                     ,{field: 'prepayId',align: 'center', width: 200, title: '预支付ID',sort: true,hide:true}
+                     ,{field: 'fee',align: 'center', width: 200, title: '手续费',sort: true,hide:true}
+                     ,{field: 'realGetMoney',align: 'center', width: 200, title: '实际收钱',sort: true,hide:true}
+                     ,{field: 'dataState',align: 'center', width: 200, title: '数据状态',sort: true,hide:true}*/
+                    /*   ,{title: '操作', minWidth: 100, align: 'center', fixed: 'right', toolbar: '#table-ScaleUserOrder-list'}*/
+                ]]
+                ,autoSort: false
+                ,page: true
+                ,limit: 10
+                ,limits: [10, 20, 30,40]
+                ,text: {
+                    none: '暂无相关数据'
+                }
+            });
+
+            //为toolbar添加事件响应
+            table.on('tool(ScaleUserOrder-list)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+                /*var data = obj.data;*///获得当前行数据
+                //区分事件
+                switch(obj.event){
+                    case 'del':
+                        deleteVo(obj);
+                        break;
+                    case 'edit':
+                        editVo(obj);
+                        break;
+                };
+            });
+
+            //监听排序事件
+            table.on('sort(ScaleUserOrder-list)', function(obj){ //注：sort是工具条事件名，LAY-app-province-list是table原始容器的属性 lay-filter="对应的值"
+                var sort = obj.field;
+                //默认排序
+                switch(obj.field){
+                    case 'id':
+                        sort ="ID";
+                        break;
+                    case 'createTime':
+                        sort ="CREATE_TIME";
+                        break;
+                    case 'scaleId':
+                        sort ="SCALE_ID";
+                        break;
+                    case 'scaleName':
+                        sort ="SCALE_NAME";
+                        break;
+                    case 'price':
+                        sort ="PRICE";
+                        break;
+                    case 'oraPrice':
+                        sort ="ORA_PRICE";
+                        break;
+                    case 'orderState':
+                        sort ="ORDER_STATE";
+                        break;
+                    case 'payTime':
+                        sort ="PAY_TIME";
+                        break;
+                    case 'ownerUserId':
+                        sort ="OWNER_USER_ID";
+                        break;
+                    case 'ownerUserName':
+                        sort ="OWNER_USER_NAME";
+                        break;
+                    case 'ownerUserType':
+                        sort ="OWNER_USER_TYPE";
+                        break;
+                    case 'ownerComId':
+                        sort ="OWNER_COM_ID";
+                        break;
+                    case 'ownerComName':
+                        sort ="OWNER_COM_NAME";
+                        break;
+                    case 'orderCode':
+                        sort ="ORDER_CODE";
+                        break;
+                    case 'prepayId':
+                        sort ="PREPAY_ID";
+                        break;
+                    case 'fee':
+                        sort ="FEE";
+                        break;
+                    case 'realGetMoney':
+                        sort ="REAL_GET_MONEY";
+                        break;
+                    case 'dataState':
+                        sort ="DATA_STATE";
+                        break;
+                    case 'channelId':
+                        sort ="CHANNEL_ID";
+                        break;
+                    case 'channelName':
+                        sort ="CHANNEL_NAME";
+                        break;
+                };
+                if(obj.type==null){
+                    return;
+                }
+                //有些时候，你可能需要根据当前排序的字段，重新向服务端发送请求，从而实现服务端排序，如：
+                table.reload('ScaleUserOrder-list', {
+                    initSort: obj//记录初始排序，如果不设的话，将无法标记表头的排序状态。
+                    ,where: { //请求参数（注意：这里面的参数可任意定义，并非下面固定的格式）
+                        orderBy: sort+" "+obj.type //排序字段
+                    }
+                });
+            });
+        }
+        defineTable();
+
+        //删除
+        deleteVo = function (obj) {
+            layer.confirm('确定删除此记录吗？', function(index){
+                admin.req({
+                    url:layui.setter.basePath +'/admin/scaleUserOrder/deleteByIds.jsn',
+                    data:{'ids':obj.data.id},
+                    method:"post",
+                    success:function (data) {
+                        table.reload('ScaleUserOrder-list',
+                            {page:
+                                    { curr: common.deleteJumpPage(obj) // 执行页面跳转方法
+                                    }
+                            }
+                        );
+                        layer.close(index);
+                        layer.msg('删除成功', {
+                            icon: 1
+                        });
+                    },
+                });
+            });
+        }
+        //编辑
+        editVo = function (obj) {
+            layer.open({
+                type: 2
+                ,title: '编辑'
+                ,content: 'ScaleUserOrderEdit.html'
+                ,maxmin: true
+                ,area: ['550px', '550px']
+                ,btn: ['确定', '取消']
+                ,success: function(layero, index){
+                    var s = layero.find('iframe');
+                    $("id",s[0].contentWindow.document).val(obj.data.id);
+                    //给iframe元素赋值
+                    var othis = layero.find('iframe').contents().find("#ScaleUserOrder-form").click();
+
+                    othis.find('input[name="id"]').val(obj.data.id);
+                    othis.find('input[name="createTime"]').val(obj.data.createTime);
+                    othis.find('input[name="scaleId"]').val(obj.data.scaleId);
+                    othis.find('input[name="scaleName"]').val(obj.data.scaleName);
+                    othis.find('input[name="price"]').val(obj.data.price);
+                    othis.find('input[name="oraPrice"]').val(obj.data.oraPrice);
+                    othis.find('input[name="orderState"]').val(obj.data.orderState);
+                    othis.find('input[name="payTime"]').val(obj.data.payTime);
+                    othis.find('input[name="ownerUserId"]').val(obj.data.ownerUserId);
+                    othis.find('input[name="ownerUserName"]').val(obj.data.ownerUserName);
+                    othis.find('input[name="ownerUserType"]').val(obj.data.ownerUserType);
+                    othis.find('input[name="ownerComId"]').val(obj.data.ownerComId);
+                    othis.find('input[name="ownerComName"]').val(obj.data.ownerComName);
+                    othis.find('input[name="orderCode"]').val(obj.data.orderCode);
+                    othis.find('input[name="prepayId"]').val(obj.data.prepayId);
+                    othis.find('input[name="fee"]').val(obj.data.fee);
+                    othis.find('input[name="realGetMoney"]').val(obj.data.realGetMoney);
+                    othis.find('input[name="dataState"]').val(obj.data.dataState);
+                    othis.find('input[name="channelName"]').val(obj.data.channelName);
+                }
+                ,yes: function(index, layero){
+                    var submit = layero.find('iframe').contents().find("#ScaleUserOrder-form-edit");
+                    submit.trigger('click');
+                }
+            });
+        }
+
+        //点击事件
+        var active = {
+            //批量删除
+            batchdel: function(){
+                var checkStatus = table.checkStatus('ScaleUserOrder-list')
+                    ,checkData = checkStatus.data; //得到选中的数据
+
+                if(checkData.length === 0){
+                    return layer.msg('请选择数据');
+                }
+
+                layer.confirm('确定删除吗？', function(index) {
+                    var ids = "" ;
+                    for(var i = 0;i<checkData.length;i++){
+                        if(ids==""){
+                            ids= checkData[i].id;
+                        }else {
+                            ids = ids+","+checkData[i].id;
+                        }
+                    }
+                    admin.req({
+                        url:layui.setter.basePath +'/admin/scaleUserOrder/deleteByIds.jsn',
+                        data:{'ids':ids},
+                        method:"post",
+                        success:function (data) {
+                            table.reload('ScaleUserOrder-list',
+                                {page:
+                                        { curr: common.deleteDulJumpPage(checkStatus) // 执行页面跳转方法
+                                        }
+                                }
+                            );
+                            layer.msg('删除成功', {
+                                icon: 1
+                            });
+                        },
+                    });
+                });
+            }
+            //添加
+            ,add: function(){
+                layer.open({
+                    type: 2
+                    ,title: '添加'
+                    ,content: 'ScaleUserOrderAdd.html'
+                    ,maxmin: true
+                    ,area: ['550px', '550px']
+                    ,btn: ['确定', '取消']
+                    ,yes: function(index, layero){
+                        //点击确认触发 iframe 内容中的按钮提交
+                        var submit = layero.find('iframe').contents().find("#ScaleUserOrder-form-submit");
+                        submit.click();
+                    }
+                });
+            }
+        }
+        //绑定点击事件
+        $('.layui-btn.layuiadmin-btn-comm').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+
+
+    });
+
+</script>
+</body>
+</html>
+

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.edgedo.sys.mapper.ScaleMapper" >
+   
+   
+    <resultMap id="BaseResultMap" type="com.edgedo.sys.entity.Scale" >
+			<id column="ID" property="id"/>
+			<result column="CREATE_TIME" property="createTime"/>
+			<result column="SCALE_NAME" property="scaleName"/>
+			<result column="SCALE_DESCRIPTION" property="scaleDescription"/>
+			<result column="SCALE_PRICE" property="scalePrice"/>
+			<result column="DISCOUNT_PRICE" property="discountPrice"/>
+			<result column="QUESTION_SUM_NUM" property="questionSumNum"/>
+			<result column="TEST_PEOPLE_NUM" property="testPeopleNum"/>
+			<result column="SMALL_IMAGE_URL" property="smallImageUrl"/>
+			<result column="BIG_IMAGE_URL" property="bigImageUrl"/>
+			<result column="ORDER_NUM" property="orderNum"/>
+			<result column="DATA_STATE" property="dataState"/>
+		    <result column="DISCOUNT_STATE" property="discountState"/>
+    </resultMap>
+   
+    <resultMap id="BaseResultViewMap" type="com.edgedo.sys.queryvo.ScaleView" extends="BaseResultMap">
+    
+    </resultMap>
+  
+  
+  <!-- ******* 新增字段请修改这里  ******  -->
+  <sql id="Base_Column_List">
+	 ID, CREATE_TIME, SCALE_NAME, SCALE_DESCRIPTION, SCALE_PRICE, DISCOUNT_PRICE,QUESTION_SUM_NUM,TEST_PEOPLE_NUM, SMALL_IMAGE_URL, BIG_IMAGE_URL, DATA_STATE,DISCOUNT_STATE
+  </sql>
+  
+  <!-- ******* 利用好这里的动态查询条件  ******  -->
+  <sql id="where">
+  	<where>
+
+				<if test='queryObj != null and  queryObj.scaleName != null and @org.apache.commons.lang3.StringUtils@isNotEmpty(queryObj.scaleName)'>
+					AND  SCALE_NAME LIKE concat('%',#{queryObj.scaleName},'%')
+				</if>
+  	</where>
+  	
+  </sql>
+  
+  <!-- ******* 排序判断  ******  
+  <sql id="orderBy">
+  	<if test="orderBy != null and orderBy!= '' ">
+  		order by  ${orderBy}
+  	</if>
+  </sql>-->
+  
+  
+  <!-- 分页条件查询  -->
+  <select id="listPage" parameterType="com.edgedo.sys.queryvo.ScaleQuery" resultMap="BaseResultViewMap">
+  		select <include refid="Base_Column_List"/> from scale 
+  		<include refid="where"/>
+  </select>
+  
+   <!-- 不分页条件查询  -->
+  <select id="listByObj" parameterType="com.edgedo.sys.queryvo.ScaleQuery" resultMap="BaseResultViewMap">
+  		select <include refid="Base_Column_List"/> from scale 
+  		<include refid="where"/>
+  </select>
+
+	<select id="selectAllNotSelected" parameterType="com.edgedo.sys.queryvo.ScaleQuery" resultMap="BaseResultViewMap">
+		select <include refid="Base_Column_List"/> from scale
+		where DATA_STATE='1'
+		and ID not in
+		(select SCALE_ID from scale_company_order where DATA_STATE='1' and OWNER_COMPANY_ID=#{companyId})
+	</select>
+  
+  
+</mapper>

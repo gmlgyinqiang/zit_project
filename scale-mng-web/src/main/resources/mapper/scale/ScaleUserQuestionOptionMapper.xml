@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.edgedo.sys.mapper.ScaleUserQuestionOptionMapper" >
+   
+   
+    <resultMap id="BaseResultMap" type="com.edgedo.sys.entity.ScaleUserQuestionOption" >
+			<id column="ID" property="id"/>
+			<result column="CREATE_TIME" property="createTime"/>
+			<result column="OPTION_NUM" property="optionNum"/>
+			<result column="OPTION_DESC" property="optionDesc"/>
+			<result column="OPTION_SCORE" property="optionScore"/>
+			<result column="IS_CHECKED" property="isChecked"/>
+			<result column="OWNER_USER_QUESTION_ID" property="ownerUserQuestionId"/>
+			<result column="OWNER_QUESTION_DESC" property="ownerQuestionDesc"/>
+			<result column="USER_ID" property="userId"/>
+			<result column="OWNER_SCALE_ID" property="ownerScaleId"/>
+			<result column="OWNER_SCALE_NAME" property="ownerScaleName"/>
+			<result column="DATA_STATE" property="dataState"/>
+			<result column="OWNER_QUESTION_ID" property="ownerQuestionId"/>
+    </resultMap>
+   
+    <resultMap id="BaseResultViewMap" type="com.edgedo.sys.queryvo.ScaleUserQuestionOptionView" extends="BaseResultMap">
+    
+    </resultMap>
+  
+  
+  <!-- ******* 新增字段请修改这里  ******  -->
+  <sql id="Base_Column_List">
+	 ID, CREATE_TIME, OPTION_NUM, OPTION_DESC, OPTION_SCORE, IS_CHECKED, OWNER_USER_QUESTION_ID, OWNER_QUESTION_DESC, USER_ID, OWNER_SCALE_ID, OWNER_SCALE_NAME, DATA_STATE, OWNER_QUESTION_ID
+  </sql>
+  
+  <!-- ******* 利用好这里的动态查询条件  ******  -->
+  <sql id="where">
+  	<where>
+				<if test='queryObj != null and  queryObj.createTime != null'>
+					AND  CREATE_TIME = #{queryObj.createTime}
+				</if>
+				<if test='queryObj != null and  queryObj.optionNum != null and @org.apache.commons.lang3.StringUtils@isNotEmpty(queryObj.optionNum)'>
+					AND  OPTION_NUM = #{queryObj.optionNum}
+				</if>
+  	</where>
+  	
+  </sql>
+  
+  <!-- ******* 排序判断  ******  
+  <sql id="orderBy">
+  	<if test="orderBy != null and orderBy!= '' ">
+  		order by  ${orderBy}
+  	</if>
+  </sql>-->
+  
+  
+  <!-- 分页条件查询  -->
+  <select id="listPage" parameterType="com.edgedo.sys.queryvo.ScaleUserQuestionOptionQuery" resultMap="BaseResultViewMap">
+  		select <include refid="Base_Column_List"/> from scale_user_question_option 
+  		<include refid="where"/>
+  </select>
+  
+   <!-- 不分页条件查询  -->
+  <select id="listByObj" parameterType="com.edgedo.sys.queryvo.ScaleUserQuestionOptionQuery" resultMap="BaseResultViewMap">
+  		select <include refid="Base_Column_List"/> from scale_user_question_option
+  		<include refid="where"/>
+  </select>
+
+	<update id="logicDelete" parameterType="java.lang.String">
+		update scale_user_question_option set DATA_STATE='0'
+		where DATA_STATE='1' and ID=#{id}
+	</update>
+
+	<select id="selectOptionIdByQuestionId" parameterType="java.lang.String" resultType="java.lang.String">
+		select ID from scale_user_question_option
+		where DATA_STATE='1' and OWNER_USER_QUESTION_ID=#{questionId}
+	</select>
+
+</mapper>

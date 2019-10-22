@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>新增</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../../../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../../../layuiadmin/style/formSelects/formSelects-v4.css" media="all">
+</head>
+<body>
+
+<div class="layui-form" lay-filter="WorkerScale-form" id="WorkerScale-form" style="padding: 0 30px 0 0;">
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <input type="hidden" id="id" name="id" class="layui-input">
+                <input type="hidden" id="scaleId" name="scaleId" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">量表名</label>
+            <div class="layui-input-block">
+                <input type="text" name="scaleName" class="layui-input" disabled>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">已完成人员</label>
+            <div class="layui-input-block">
+                <textarea id="finishedWorker" cols="57" rows="4" disabled></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">未完成人员</label>
+            <div class="layui-input-block">
+                <textarea id="unFinishedWorker" cols="57" rows="4" disabled></textarea>
+            </div>
+        </div>
+</div>
+
+
+<script id="workOptionList" type="text/html">
+    {{#  layui.each(d.data, function(index, item){ }}
+    <option value="{{item.id}}">{{ item.userName }}</option>
+    {{#  }); }}
+</script>
+<script src="../../../../../layuiadmin/layui/layui.js"></script>
+<script src="../../../../../layuiadmin//style/formSelects/formSelects-v4.js"></script>
+<script>
+        layui.config({
+            base: '../../../../../layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index', 'form','laydate'], function(){
+            var laytpl = layui.laytpl;
+            var $ = layui.$
+                ,laydate = layui.laydate
+                ,admin  = layui.admin
+                ,formSelects = layui.formSelects
+                ,form = layui.form;
+
+            checkWorkerScaleOrder();
+
+            //查询该企业下面的员工完成评测情况
+            function checkWorkerScaleOrder(){
+                var field = {'id':$("#id").val(),'scaleId':$("#scaleId").val()};
+                admin.req({
+                    url:layui.setter.basePath + '/admin/scaleUserOrder/selectScaleSituation.jsn',
+                    data:field,
+                    method:'post',
+                    success:function(data){
+                        debugger;
+                        var finishedArr = data.data[0];
+                        if(finishedArr.length > 0){
+                            var html = ""
+                            for(var i=0;i<finishedArr.length;i++){
+                                html += finishedArr[i];
+                            }
+                            $("#finishedWorker").val(html);
+                        }else{
+                            var html = "暂无人员";
+                            $("#finishedWorker").val(html);
+                        }
+
+                        var unFinishedArr = data.data[1];
+                        if(unFinishedArr.length > 0){
+                            var html = ""
+                            for(var i=0;i<unFinishedArr.length;i++){
+                                html += unFinishedArr[i];
+                            }
+                            $("#unFinishedWorker").val(html);
+                        }else{
+                            var html = "暂无人员";
+                            $("#unFinishedWorker").val(html);
+                        }
+
+                    }
+                })
+            }
+
+        })
+</script>
+</body>
+</html>

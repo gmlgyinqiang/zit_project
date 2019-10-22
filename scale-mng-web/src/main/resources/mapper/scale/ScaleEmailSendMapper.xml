@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.edgedo.sys.mapper.ScaleEmailSendMapper" >
+   
+   
+    <resultMap id="BaseResultMap" type="com.edgedo.sys.entity.ScaleEmailSend" >
+			<id column="ID" property="id"/>
+			<result column="USER_NAME" property="userName"/>
+			<result column="PHONE_NUM" property="phoneNum"/>
+			<result column="USER_EMAIL" property="userEmail"/>
+			<result column="SEBD_TIME" property="sebdTime"/>
+			<result column="SEND_STATE" property="sendState"/>
+			<result column="COMPANY_NAME" property="companyName"/>
+			<result column="TEST_RESULT" property="testResult"/>
+			<result column="DATE_STATE" property="dateState"/>
+    </resultMap>
+   
+    <resultMap id="BaseResultViewMap" type="com.edgedo.sys.queryvo.ScaleEmailSendView" extends="BaseResultMap">
+    
+    </resultMap>
+  
+  
+  <!-- ******* 新增字段请修改这里  ******  -->
+  <sql id="Base_Column_List">
+	 ID, USER_NAME, PHONE_NUM, USER_EMAIL, SEBD_TIME, SEND_STATE, COMPANY_NAME, TEST_RESULT, DATE_STATE
+  </sql>
+  
+  <!-- ******* 利用好这里的动态查询条件  ******  -->
+	<sql id="where">
+		<where>
+
+			<if test='queryObj != null and  queryObj.userName != null and @org.apache.commons.lang3.StringUtils@isNotEmpty(queryObj.userName)'>
+				AND  USER_NAME like concat('%',#{queryObj.userName},'%')
+			</if>
+			<if test='queryObj != null and  queryObj.phoneNum != null and @org.apache.commons.lang3.StringUtils@isNotEmpty(queryObj.phoneNum)'>
+				AND  PHONE_NUM like concat('%',#{queryObj.phoneNum},'%')
+			</if>
+			<if test='queryObj != null and  queryObj.companyName != null and @org.apache.commons.lang3.StringUtils@isNotEmpty(queryObj.companyName)'>
+				AND  COMPANY_NAME like concat('%',#{queryObj.companyName},'%')
+			</if>
+			<if test='queryObj != null and  queryObj.userEmail != null and @org.apache.commons.lang3.StringUtils@isNotEmpty(queryObj.userEmail)'>
+				AND  USER_EMAIL  like concat('%',#{queryObj.userEmail},'%')
+
+			</if>
+
+			<if test='queryObj != null and  queryObj.sendState != null and @org.apache.commons.lang3.StringUtils@isNotEmpty(queryObj.sendState)'>
+				AND  SEND_STATE = #{queryObj.sendState}
+			</if>
+		</where>
+  	
+  </sql>
+  
+  <!-- ******* 排序判断  ******  
+  <sql id="orderBy">
+  	<if test="orderBy != null and orderBy!= '' ">
+  		order by  ${orderBy}
+  	</if>
+  </sql>-->
+  
+  
+  <!-- 分页条件查询  -->
+  <select id="listPage" parameterType="com.edgedo.sys.queryvo.ScaleEmailSendQuery" resultMap="BaseResultViewMap">
+  		select <include refid="Base_Column_List"/> from scale_email_send 
+  		<include refid="where"/>
+  </select>
+  
+   <!-- 不分页条件查询  -->
+  <select id="listByObj" parameterType="com.edgedo.sys.queryvo.ScaleEmailSendQuery" resultMap="BaseResultViewMap">
+  		select <include refid="Base_Column_List"/> from scale_email_send 
+  		<include refid="where"/>
+  </select>
+  
+  <update id="updateSendStateById" parameterType="java.lang.String">
+	  update scale_email_send
+	  set SEND_STATE = "1"
+	  where ID = #{id}
+  </update>
+</mapper>

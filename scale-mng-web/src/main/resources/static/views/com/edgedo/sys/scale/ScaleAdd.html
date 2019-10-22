@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>新增</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../../../../layuiadmin/layui/css/layui.css" media="all">
+</head>
+<body>
+
+<div class="layui-form" lay-filter="Scale-form" id="Scale-form" style="padding: 20px 30px 0 0;">
+        <div class="layui-form-item">
+            <label class="layui-form-label">量表名</label>
+            <div class="layui-input-block">
+                <input type="text" name="scaleName" lay-verify="required" placeholder="请输入量表名" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">量表价格</label>
+            <div class="layui-input-block">
+                <input type="text" name="scalePrice" lay-verify="required|number" placeholder="请输入量表价格" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">量表描述</label>
+            <div class="layui-input-block">
+                <textarea placeholder="请输入量表描述" name="scaleDescription" class="layui-textarea"></textarea>
+             <!--   <input type="text" name="scaleDescription" lay-verify="required" placeholder="请输入量表描述" autocomplete="off" class="layui-input">-->
+            </div>
+        </div>
+        <!--<div class="layui-form-item">
+            <label class="layui-form-label">已测人数</label>
+            <div class="layui-input-block">
+                <input type="text" name="testPeopleNum" lay-verify="required|number" placeholder="请输入已测人数·" autocomplete="off" class="layui-input">
+            </div>
+        </div>-->
+        <!--<div class="layui-form-item">
+            <label class="layui-form-label">缩略图</label>
+            <div class="layui-input-block">
+                <input type="text" name="smallImageUrl" lay-verify="required" placeholder="请输入小图" autocomplete="off" class="layui-input">
+            </div>
+        </div>-->
+        <div class="layui-form-item">
+            <label class="layui-form-label">缩略图</label>
+            <div class="layui-input-block">
+                <!--onchange="app_uploadFile(this,'window.scope_updateLoad_idPhotoAPathFile');"-->
+                <input type="text" name="smallImageUrl" maxlength="500" style="width: 50%;display: inline-block" lay-verify="" placeholder="请输入图片地址" autocomplete="off" class="layui-input">
+                <input type="hidden" id="pictures_hidden_input" name="imgBase64Str"  >
+                <button type="button" class="layui-btn" id="hotel-upload-normal">上传图片</button>
+            </div>
+            <div id="preview_contariner" style="padding-left: 50px;position: relative;display: none;padding-left: 50px;">
+                <!--<div class="remark-btn right-top" style="right: 50%;">
+                    <i class="layui-icon layui-icon-close-fill"></i>
+                </div>-->
+                <img  id="hotel-img-preview" style="width: 50%;">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">详情图</label>
+            <div class="layui-input-block">
+                <!--onchange="app_uploadFile(this,'window.scope_updateLoad_idPhotoAPathFile');"-->
+                <input type="text" name="bigImageUrl" maxlength="500" style="width: 50%;display: inline-block" lay-verify="" placeholder="请输入图片地址" autocomplete="off" class="layui-input">
+                <input type="hidden" id="pictures_hidden_input1" name="imgBase64Str1"  >
+                <button type="button" class="layui-btn" id="hotel-upload-normal1">上传图片</button>
+            </div>
+            <div id="preview_contariner1" style="padding-left: 50px;position: relative;display: none;padding-left: 50px;">
+                <!--<div class="remark-btn right-top" style="right: 50%;">
+                    <i class="layui-icon layui-icon-close-fill"></i>
+                </div>-->
+                <img  id="hotel-img-preview1" style="width: 50%;">
+            </div>
+        </div>
+        <!--<div class="layui-form-item">
+            <label class="layui-form-label">详情图</label>
+            <div class="layui-input-block">
+                <input type="text" name="bigImageUrl" lay-verify="required" placeholder="请输入大图" autocomplete="off" class="layui-input">
+            </div>
+        </div>-->
+
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="Scale-form-submit" id="Scale-form-submit" value="确认添加">
+    </div>
+</div>
+
+<script src="../../../../../layuiadmin/layui/layui.js"></script>
+<script src="../../../../../layuiadmin/appjs/imgcompress.js"></script>
+<script>
+        layui.config({
+            base: '../../../../../layuiadmin/' //静态资源所在路径
+        }).extend({
+            index: 'lib/index' //主入口模块
+        }).use(['index', 'form','laydate','upload'], function(){
+            var $ = layui.$
+                ,laydate = layui.laydate
+                ,admin  = layui.admin
+                ,form = layui.form
+                ,upload = layui.upload;
+
+            //监听提交
+            form.on('submit(Scale-form-submit)', function(data){
+                var field = data.field; //获取提交的字段
+                var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                //提交 Ajax 成功后，关闭当前弹层并重载表格
+                admin.req({
+                    url:layui.setter.basePath +'/admin/scale/saveOrUpdate.jsn',
+                    data:field,
+                    method:"post",
+                    success:function (data) {
+                        parent.layui.table.reload('Scale-list'); //重载表格
+                        parent.layer.close(index); //再执行关闭
+                        parent.layer.msg('添加成功', {
+                            icon: 1
+                        });
+                    },
+                });
+
+            });
+            laydate.render({
+                elem: '#createTime', //指定元素
+                type:'datetime'
+            });
+
+            function initUploadImg(){
+                //普通图片上传
+                var uploadInst = upload.render({
+                    elem: '#hotel-upload-normal'
+                    ,auto: false
+                    ,choose: function(obj){
+                        //预读本地文件示例，不支持ie8
+                        obj.preview(function(index, file, result){
+                            var kbLen = result.length/1024;
+                            //图片链接（base64）
+                            if(kbLen>750){
+                                app_compress(kbLen,file,compressDone,layui.$);
+                            }else{
+                                compressDone(result);
+                            }
+
+                        });
+                    }
+
+                });
+            }
+            initUploadImg();
+
+            function compressDone(base64Str){
+                $('#pictures_hidden_input').val(base64Str);
+                $("#preview_contariner").show();
+                $('#hotel-img-preview').attr('src', base64Str);
+            }
+
+            function initUploadImg1(){
+
+
+                //普通图片上传
+                var uploadInst = upload.render({
+                    elem: '#hotel-upload-normal1'
+                    ,auto: false
+                    ,choose: function(obj){
+                        //预读本地文件示例，不支持ie8
+                        obj.preview(function(index, file, result){
+                            var kbLen = result.length/1024;
+                            //图片链接（base64）
+                            if(kbLen>750){
+                                app_compress(kbLen,file,compressDone,layui.$);
+                            }else{
+                                compressDone1(result);
+                            }
+
+                        });
+                    }
+
+                });
+            }
+            initUploadImg1();
+
+            function compressDone1(base64Str){
+                $('#pictures_hidden_input1').val(base64Str);
+                $("#preview_contariner1").show();
+                $('#hotel-img-preview1').attr('src', base64Str);
+            }
+        })
+</script>
+</body>
+</html>
